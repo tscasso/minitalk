@@ -1,24 +1,39 @@
-NAME	=	libftprintf.a
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror
+RM = rm -rf
 
-CC	=	gcc
+FT_PRINTF = ft_printf
+NAME_CLIENT = client
+NAME_SERVER = server
 
-CFLAGS	=	-Wall -Wextra -Werror
+SRCS_CLIENT = client.c utils.c
+SRCS_SERVER = server.c utils.c
 
-RM	=	rm -f
+OBJS_CLIENT = $(SRCS_CLIENT:.c=.o)
+OBJS_SERVER = $(SRCS_SERVER:.c=.o)
 
-SRCS	=	ft_printfn.c ft_printf.c
+all: $(FT_PRINTF) $(NAME_CLIENT) $(NAME_SERVER)
 
-OBJS	=	$(SRCS:.c=.o)
+$(FT_PRINTF):
+	make -sC $@ 
 
-all: $(NAME)
+$(NAME_CLIENT): $(OBJS_CLIENT)
+	$(CC) $(CFLAGS) $^ -o $@ -L$(FT_PRINTF) -lftprintf
 
-$(NAME): $(OBJS)
-	ar rcs $(NAME) $(OBJS)
+$(NAME_SERVER): $(OBJS_SERVER)
+	$(CC) $(CFLAGS) $^ -o $@ -L$(FT_PRINTF) -lftprintf
+
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+bonus: all
 
 clean:
-	$(RM) $(OBJS)
+	make -sC $(FT_PRINTF) clean
+	$(RM) $(OBJS_CLIENT) $(OBJS_SERVER)
 
 fclean: clean
-	$(RM) $(NAME)
+	make -sC $(FT_PRINTF) fclean
+	$(RM) $(NAME_CLIENT) $(NAME_SERVER)
 
 re: fclean all
